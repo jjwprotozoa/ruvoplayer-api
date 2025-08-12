@@ -27,16 +27,5 @@
             "src": "/(.*)",
             "dest": "/server.js"
         }
-    ],
-    "functions": {
-        "parse.js": {
-            "maxDuration": 30
-        },
-        "xtream.js": {
-            "maxDuration": 30
-        },
-        "stalker.js": {
-            "maxDuration": 30
-        }
-    }
+    ]
 }
