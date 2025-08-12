@@ -1,0 +1,42 @@
+{
+    "version": 2,
+    "builds": [
+        {
+            "src": "*.js",
+            "use": "@vercel/node"
+        }
+    ],
+    "routes": [
+        {
+            "src": "/parse",
+            "dest": "/parse.js"
+        },
+        {
+            "src": "/xtream",
+            "dest": "/xtream.js"
+        },
+        {
+            "src": "/stalker",
+            "dest": "/stalker.js"
+        },
+        {
+            "src": "/health",
+            "dest": "/server.js"
+        },
+        {
+            "src": "/(.*)",
+            "dest": "/server.js"
+        }
+    ],
+    "functions": {
+        "parse.js": {
+            "maxDuration": 30
+        },
+        "xtream.js": {
+            "maxDuration": 30
+        },
+        "stalker.js": {
+            "maxDuration": 30
+        }
+    }
+}
