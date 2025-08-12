@@ -21,6 +21,20 @@ app.use(cors());
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
+// Root route for Vercel
+app.get('/', (req, res) => {
+  res.json({ 
+    status: 'OK', 
+    message: 'Ruvo Player Backup API is running',
+    endpoints: {
+      parse: '/parse',
+      xtream: '/xtream',
+      stalker: '/stalker',
+      health: '/health'
+    }
+  });
+});
+
 // Convert Vercel serverless functions to Express routes
 app.get('/api/xtream', async (req, res) => {
   // Mock the Vercel request/response objects
@@ -41,13 +55,15 @@ app.get('/api/xtream', async (req, res) => {
 
 // Health check endpoint
 app.get('/health', (req, res) => {
-  res.json({ status: 'OK', message: 'Ruvo Player API is running' });
+  res.json({ status: 'OK', message: 'Ruvo Player Backup API is running' });
 });
 
-// Start server
-app.listen(PORT, () => {
-  console.log(`🚀 Ruvo Player API server running on http://localhost:${PORT}`);
-  console.log(`📡 Xtream endpoint: http://localhost:${PORT}/api/xtream`);
-});
+// Start server (only for local development)
+if (process.env.NODE_ENV !== 'production') {
+  app.listen(PORT, () => {
+    console.log(`🚀 Ruvo Player API server running on http://localhost:${PORT}`);
+    console.log(`📡 Xtream endpoint: http://localhost:${PORT}/api/xtream`);
+  });
+}
 
 export default app;

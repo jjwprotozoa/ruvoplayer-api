@@ -6,26 +6,26 @@
             "use": "@vercel/node"
         }
     ],
-    "routes": [
+    "rewrites": [
         {
-            "src": "/parse",
-            "dest": "/parse.js"
+            "source": "/parse",
+            "destination": "/parse.js"
         },
         {
-            "src": "/xtream",
-            "dest": "/xtream.js"
+            "source": "/xtream",
+            "destination": "/xtream.js"
         },
         {
-            "src": "/stalker",
-            "dest": "/stalker.js"
+            "source": "/stalker",
+            "destination": "/stalker.js"
         },
         {
-            "src": "/health",
-            "dest": "/server.js"
+            "source": "/health",
+            "destination": "/server.js"
         },
         {
-            "src": "/(.*)",
-            "dest": "/server.js"
+            "source": "/(.*)",
+            "destination": "/server.js"
         }
     ]
 }
