@@ -2,30 +2,14 @@
     "version": 2,
     "builds": [
         {
-            "src": "*.js",
+            "src": "server.js",
             "use": "@vercel/node"
         }
     ],
-    "rewrites": [
+    "routes": [
         {
-            "source": "/parse",
-            "destination": "/parse.js"
-        },
-        {
-            "source": "/xtream",
-            "destination": "/xtream.js"
-        },
-        {
-            "source": "/stalker",
-            "destination": "/stalker.js"
-        },
-        {
-            "source": "/health",
-            "destination": "/server.js"
-        },
-        {
-            "source": "/(.*)",
-            "destination": "/server.js"
+            "src": "/(.*)",
+            "dest": "server.js"
         }
     ]
 }

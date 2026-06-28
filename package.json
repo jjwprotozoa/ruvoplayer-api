@@ -1,16 +1,17 @@
 {
-  "name": "ruvo-player-api",
-  "version": "1.0.0",
-  "description": "Local API server for Ruvo Player",
-  "main": "server.js",
-  "type": "module",
-  "scripts": {
-    "dev": "node server.js",
-    "start": "node server.js"
-  },
-  "dependencies": {
-    "express": "^4.18.2",
-    "cors": "^2.8.5",
-    "node-fetch": "^3.3.2"
-  }
+    "name": "ruvoplayer-api",
+    "version": "2.0.0",
+    "description": "IPTVnator-compatible proxy API for RuvoPlayer",
+    "main": "server.js",
+    "type": "module",
+    "scripts": {
+        "dev": "node server.js",
+        "start": "node server.js"
+    },
+    "dependencies": {
+        "axios": "^1.13.2",
+        "cors": "^2.8.5",
+        "express": "^4.21.2",
+        "iptv-playlist-parser": "github:4gray/iptv-playlist-parser"
+    }
 }

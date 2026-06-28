@@ -1,58 +1,28 @@
-# RuvoPlayer Backup API
+# RuvoPlayer API
 
-This is the backup API deployment for RuvoPlayer, providing redundancy and failover capabilities.
+IPTVnator-compatible proxy API for the [RuvoPlayer](https://github.com/jjwprotozoa/ruvoplayer) PWA.
 
-## 🚀 **Purpose**
+## Endpoints
 
-- **Primary API**: `https://ruvoplayer-api.vercel.app`
-- **Backup API**: This repository (deployed to Vercel)
-- **Failover Strategy**: Automatic fallback if primary API is unavailable
+- `GET /health`
+- `POST /provider-targets` with `{ "url": "<provider-url>" }`
+- `GET /parse?targetId=<id>`
+- `GET /xtream?targetId=<id>&username=<u>&password=<p>&action=<action>`
+- `GET /stalker?targetId=<id>&macAddress=<mac>&action=<action>`
 
-## 📁 **API Endpoints**
+Production URL: https://ruvoplayer-api.vercel.app
 
-- **`/parse`** - Parse M3U playlists
-- **`/xtream`** - Xtream Codes API integration
-- **`/stalker`** - Stalker Portal integration
-- **`/health`** - Health check endpoint
+Backup URL: https://ruvoplayer-api-backup.vercel.app
 
-## 🛠️ **Deployment**
+## Local development
 
-### **Vercel Deployment**
-1. Connect this repository to Vercel
-2. Deploy to get your backup API URL
-3. Update your app's environment files with the backup URL
-
-### **Environment Configuration**
-```typescript
-// environment.web.ts
-export const AppConfig = {
-    BACKEND_URL: 'https://ruvoplayer-api.vercel.app',
-    FALLBACK_APIS: [
-        'https://ruvoplayer-api.vercel.app',        // Primary
-        'https://your-backup-api.vercel.app'        // Backup (this repo)
-    ]
-};
+```bash
+npm install
+CLIENT_URL=http://localhost:4200 npm run dev
 ```
 
-## 🔄 **Sync with Main API**
+## Vercel environment variables
 
-To keep this backup API in sync with your main API:
-
-1. **Copy updates** from main API repository
-2. **Deploy changes** to Vercel
-3. **Test endpoints** to ensure functionality
-
-## 📊 **Health Monitoring**
-
-Monitor both APIs to ensure availability:
-- Primary: `https://ruvoplayer-api.vercel.app/health`
-- Backup: `https://your-backup-api.vercel.app/health`
-
-## 🎯 **Usage**
-
-The backup API automatically activates when:
-- Primary API returns errors
-- Primary API times out
-- Primary API is unreachable
-
-Users experience seamless failover with no manual intervention required.
+- `CLIENT_URL` — allowed browser origins, comma-separated (example: `http://localhost:4200,https://ruvoplayer.vercel.app`)
+- `IPTVNATOR_PROXY_ALLOW_PRIVATE_NETWORKS=1` — optional, for LAN/local playlist URLs during development
+- `IPTVNATOR_ALLOW_INSECURE_TLS=1` — optional, for providers with self-signed certificates
