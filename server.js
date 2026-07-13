@@ -7,6 +7,7 @@ import {
 } from './lib/provider-url.js';
 import { parsePlaylistFromUrl } from './lib/playlist-service.js';
 import { extractFetchError, httpClient } from './lib/http-client.js';
+import { handleStreamProxy } from './lib/stream-proxy.js';
 
 const providerTargets = globalThis.__ruvoplayerProviderTargets ?? new Map();
 globalThis.__ruvoplayerProviderTargets = providerTargets;
@@ -39,6 +40,7 @@ app.get('/', (_req, res) => {
             parse: '/parse?targetId=<id>',
             xtream: '/xtream?targetId=<id>&username=<u>&password=<p>&action=<action>',
             stalker: '/stalker?targetId=<id>&macAddress=<mac>&action=<action>',
+            streamProxy: '/stream-proxy?url=<encoded-stream-url>',
         },
     });
 });
@@ -153,6 +155,47 @@ app.get('/stalker', corsMiddleware, async (req, res) => {
         res.json(extractFetchError(error));
     }
 });
+
+app.options('/stream-proxy', corsMiddleware);
+app.head('/stream-proxy', corsMiddleware, async (req, res) => {
+    await proxyStreamRequest(req, res);
+});
+app.get('/stream-proxy', corsMiddleware, async (req, res) => {
+    await proxyStreamRequest(req, res);
+});
+
+async function proxyStreamRequest(req, res) {
+    const streamUrl =
+        getQueryString(req.query, 'url') ?? getQueryString(req.query, 'streamUrl');
+    if (!streamUrl) {
+        res.status(400).json({ message: 'Missing url parameter', status: 400 });
+        return;
+    }
+
+    let targetUrl;
+    try {
+        targetUrl = new URL(streamUrl);
+    } catch {
+        res.status(400).json({ message: 'Invalid stream URL', status: 400 });
+        return;
+    }
+
+    if (targetUrl.protocol !== 'http:' && targetUrl.protocol !== 'https:') {
+        res.status(400).json({
+            message: 'Only http and https stream URLs are supported',
+            status: 400,
+        });
+        return;
+    }
+
+    const validationResult = await validateProviderUrl(streamUrl);
+    if ('message' in validationResult) {
+        res.status(validationResult.status).json(validationResult);
+        return;
+    }
+
+    handleStreamProxy(req, res, targetUrl);
+}
 
 function getRegisteredProviderUrl(req, res) {
     const targetId = getQueryString(req.query, 'targetId');

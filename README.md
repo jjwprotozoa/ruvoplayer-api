@@ -9,10 +9,13 @@ IPTVnator-compatible proxy API for the [RuvoPlayer](https://github.com/jjwprotoz
 - `GET /parse?targetId=<id>`
 - `GET /xtream?targetId=<id>&username=<u>&password=<p>&action=<action>`
 - `GET /stalker?targetId=<id>&macAddress=<mac>&action=<action>`
+- `GET /stream-proxy?url=<encoded-stream-url>` — CORS/mixed-content stream proxy for HLS/TS inline playback (also accepts `streamUrl`)
 
 Production URL: https://ruvoplayer-api.vercel.app
 
 Backup URL: https://ruvoplayer-api-backup.vercel.app
+
+> **Note:** The canonical API implementation also lives in the [ruvoplayer monorepo](https://github.com/jjwprotozoa/ruvoplayer) at `apps/web-backend`. New deployments may migrate there; this standalone repo remains supported for existing Vercel projects.
 
 ## Local development
 
