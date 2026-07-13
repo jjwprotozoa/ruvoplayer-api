@@ -3,14 +3,12 @@ import express from 'express';
 import {
     createProviderTargetId,
     normalizeXtreamServerUrl,
+    resolveProviderTargetId,
     validateProviderUrl,
 } from './lib/provider-url.js';
 import { parsePlaylistFromUrl } from './lib/playlist-service.js';
 import { extractFetchError, httpClient } from './lib/http-client.js';
 import { handleStreamProxy } from './lib/stream-proxy.js';
-
-const providerTargets = globalThis.__ruvoplayerProviderTargets ?? new Map();
-globalThis.__ruvoplayerProviderTargets = providerTargets;
 
 const app = express();
 
@@ -74,13 +72,12 @@ app.post(
         }
 
         const targetId = createProviderTargetId(result);
-        providerTargets.set(targetId, result);
         res.json({ targetId });
     }
 );
 
 app.get('/parse', corsMiddleware, async (req, res) => {
-    const targetUrl = getRegisteredProviderUrl(req, res);
+    const targetUrl = await getRegisteredProviderUrl(req, res);
     if (!targetUrl) {
         return;
     }
@@ -96,7 +93,7 @@ app.get('/parse', corsMiddleware, async (req, res) => {
 });
 
 app.get('/xtream', corsMiddleware, async (req, res) => {
-    const registeredUrl = getRegisteredProviderUrl(req, res);
+    const registeredUrl = await getRegisteredProviderUrl(req, res);
     if (!registeredUrl) {
         return;
     }
@@ -130,7 +127,7 @@ app.get('/xtream', corsMiddleware, async (req, res) => {
 });
 
 app.get('/stalker', corsMiddleware, async (req, res) => {
-    const targetUrl = getRegisteredProviderUrl(req, res);
+    const targetUrl = await getRegisteredProviderUrl(req, res);
     if (!targetUrl) {
         return;
     }
@@ -197,23 +194,20 @@ async function proxyStreamRequest(req, res) {
     handleStreamProxy(req, res, targetUrl);
 }
 
-function getRegisteredProviderUrl(req, res) {
+async function getRegisteredProviderUrl(req, res) {
     const targetId = getQueryString(req.query, 'targetId');
     if (!targetId) {
         res.status(400).json({ message: 'Missing targetId', status: 400 });
         return null;
     }
 
-    const targetUrl = providerTargets.get(targetId);
-    if (!targetUrl) {
-        res.status(404).json({
-            message: 'Provider target not found',
-            status: 404,
-        });
+    const result = await resolveProviderTargetId(targetId);
+    if ('message' in result) {
+        res.status(result.status).json(result);
         return null;
     }
 
-    return targetUrl;
+    return result;
 }
 
 function getClientOrigins() {
